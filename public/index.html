@@ -1,0 +1,430 @@
+<html>
+  <!-- Add references to the Azure Maps Map control JavaScript and CSS files. -->
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css"
+      type="text/css"
+    />
+    <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
+    <!-- Add a reference to the Azure Maps Services Module JavaScript file. -->
+    <script src="https://atlas.microsoft.com/sdk/javascript/service/2/atlas-service.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"
+    />
+  </head>
+
+  <body>
+    <div id="app">
+      <header class="header">
+        <a class="header__logo" href="#">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/fr/9/9f/Logo_Bank_Al-Maghrib.png"
+            style="height: 70px;"
+          />
+        </a>
+        <div
+          class="ham-menu"
+          v-on:click="changeVisibility()"
+          v-bind:class="{ 'active': burgerVisibility }"
+        >
+          <span class="ham-menu__item"></span>
+          <span class="ham-menu__item"></span>
+          <span class="ham-menu__item"></span>
+        </div>
+        <nav
+          class="header__nav-wrap"
+          v-bind:class="{ 'open': burgerVisibility }" 
+          style="display: flex; justify-content: flex-end; align-items: center;"
+        >
+          <div
+            style="
+              display: flex;
+
+              align-items: center;
+              justify-content: center;
+            "
+          >
+          <i class="fa fa-user-circle" style="font-size: 25px; margin-right: 5px; color: #3b054c;"></i>
+            <p style="font-size: 14px; font-weight: 600; margin: 0;">Abderrahim Karim</p>
+            <div
+              style="
+                height: 25px;
+                width: 25px;
+                border: 1px black solid;
+                border-radius: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+              "
+            >
+              <i class="fa fa-sign-out-alt" "></i>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Latest compiled and minified CSS -->
+        <link
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          rel="stylesheet"
+        />
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css"
+          rel="stylesheet"
+        />
+      </header>
+    </div>
+
+    <div
+      class="row1"
+      style="
+        display: flex;
+        justify-content: space-between;
+
+        width: 100%;
+      "
+    >
+      <div style="width: 100%; display: flex;">
+        <div class="searchPanel flexC">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 15px;
+            "
+          >
+            <select
+              name=""
+              id="bqSelect"
+              class="bootstrap-select"
+              multiple
+              style="float: right; width: auto;"
+              title="Tous"
+            >
+              <option value="bq1">Banque 1</option>
+              <option value="bq2">Banque 2</option>
+            </select>
+          </div>
+          <div>
+            <input id="searchTbx" type="search" placeholder="Search" />
+            <button id="searchBtn" title="Search"></button>
+          </div>
+
+          <div id="listPanel"></div>
+        </div>
+        <div class="column col2" style="padding: 15px 0;">
+          <!-- <h2 style="color: #3b054c;">Map</h2> -->
+
+          <div id="map" style="height: inherit;"></div>
+        </div>
+
+        <div class="indicateurList">
+          <div
+            class="cardList"
+            style="margin-bottom: 0 !important; position: relative;"
+          >
+            <p
+              style="
+                color: #3b054c;
+                font-weight: bold;
+                position: absolute;
+                top: 5px;
+              "
+            >
+              KPIs pour 10000 personnes
+            </p>
+            <div class="cardC" id="kpiAgence">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-success"></div>
+                <span class="lnr lnr-apartment text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">Agence</div>
+                <div class="widjet-number">1,7M</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="kpiIob">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-success"></div>
+                <span class="lnr lnr-apartment text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">B-IOB</div>
+                <div class="widjet-number">0</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-neutre pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">0</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="kpiGab">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-neutre"></div>
+                <span class="lnr lnr-inbox text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">GAB</div>
+                <div class="widjet-number">1,7</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="kpiAcces">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-warning"></div>
+                <span class="lnr lnr-laptop-phone text-dark opacity-8"></span>
+              </div>
+
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">Accès</div>
+                <div class="widjet-number">1,7M</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="cardList"
+            style="margin-bottom: 0 !important; position: relative;"
+          >
+            <p
+              style="
+                color: #3b054c;
+                font-weight: bold;
+                position: absolute;
+                top: 5px;
+              "
+            >
+              Banques et accès en chiffres
+            </p>
+            <div class="cardC" id="chiffreAgence">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-success"></div>
+                <span class="lnr lnr-apartment text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">Agence</div>
+                <div class="widjet-number">1,7M</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="chiffreIob">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-success"></div>
+                <span class="lnr lnr-apartment text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">B-IOB</div>
+                <div class="widjet-number">0</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-neutre pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">0</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="chiffreGab">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-neutre"></div>
+                <span class="lnr lnr-inbox text-white"></span>
+              </div>
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">GAB</div>
+                <div class="widjet-number">1,7</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cardC" id="chiffreAcces">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-warning"></div>
+                <span class="lnr lnr-laptop-phone text-dark opacity-8"></span>
+              </div>
+
+              <div
+                class="cardLeft"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-content: center;
+                  flex: 1;
+                  position: relative;
+                "
+              >
+                <div class="widjet-text">Accès</div>
+                <div class="widjet-number">1,7M</div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-warning pl-1">
+                    <i class="fa fa-angle-up"></i>
+                    <span class="pl-1">7.35%</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="listChart">
+            <div class="chartContainer gaugeChart" id="accessGauge"></div>
+
+            <div class="chartContainer gaugeChart" id="uniteAccessGauge"></div>
+            <div
+              class="chartContainer gaugeChart"
+              id="popWithAccessGauge"
+            ></div>
+
+            <div
+              class="relative"
+              style="height: 200px; width: calc(50% - 7.5px); min-height: auto;"
+            >
+              <div
+                class="chartContainer"
+                id="popChart"
+                style="width: 100%; min-height: 200px;"
+              ></div>
+              <div class="absContainer">
+                <p>Population</p>
+                <div class="iconCircle">
+                  <i class="far fa-user"></i>
+                </div>
+                <p id="popDiff"></p>
+                <p>Evolution Population</p>
+              </div>
+            </div>
+
+            <div id="gabsChart" class="chartContainer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loader">
+      <span></span><span></span><span></span><span></span><span></span
+      ><span></span><span></span><span></span><span></span><span></span
+      ><span></span>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+    <script src="chart.js"></script>
+
+    <script src="index.js"></script>
+    <script src="events.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+    <script src="https://cdn.linearicons.com/free/1.0.0/svgembedder.min.js"></script>
+  </body>
+</html>
